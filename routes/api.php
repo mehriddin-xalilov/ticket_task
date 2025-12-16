@@ -2,17 +2,16 @@
 
 use App\Http\Controllers\Api\v1\AuthController;
 use App\Http\Controllers\Api\v1\UserController;
+use App\Http\Controllers\TicketController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
 Route::prefix('v1')->group(function () {
+
+    Route::get('/tickets', [TicketController::class, 'index']);
     Route::get('/', function (Request $request) {
         return okResponse(['version' => '1.0.0']);
     });
-//    Route::group(['prefix' => 'auth',], function () {
-//        Route::post('login', [AuthController::class, 'login']);
-//        Route::post('social-login', [AuthController::class, "socialLogin"]);
-//    });
     Route::group(['prefix' => 'auth/admin',], function () {
         Route::post('login', [AuthController::class, 'adminLogin']);
     });
