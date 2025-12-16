@@ -1,0 +1,113 @@
+<?php
+
+namespace {{namespace}};
+
+use App\Http\Controllers\Controller;
+use Illuminate\Http\Request;
+use App\Http\Requests\{{modelName}}\Store{{modelName}}Request;
+use App\Http\Requests\{{modelName}}\Update{{modelName}}Request;
+use App\Http\Repositories\v1\{{modelName}}Repository;
+use Illuminate\Http\JsonResponse;
+use App\Models\{{modelName}};
+/**
+ * @group {{modelName}}
+ *
+ */
+class {{modelName}}Controller extends Controller
+{
+
+    public function __construct(public {{modelName}}Repository ${{paramName}}Repository)
+    {
+    }
+
+    /**
+    * {{modelName}} Get all
+    *
+    * @response {
+    {{response}}
+    * }
+    * @return JsonResponse
+    */
+
+    public function index(Request $request)
+    {
+        return $this->{{paramName}}Repository->index($request);
+    }
+
+    /**
+    * {{modelName}} adminIndex get All
+    *
+    * @response {
+    {{response}}
+    * }
+    * @return JsonResponse
+    */
+
+    public function adminIndex(Request $request)
+    {
+        return $this->{{paramName}}Repository->adminIndex($request);
+    }
+
+    /**
+    * {{modelName}} view
+    *
+    * @queryParam id required
+    *
+    * @param Request $request
+    * @param int     $id
+    * @return JsonResponse
+    * @response {
+    {{response}}
+    * }
+    */
+
+    public function show(Request $request, {{modelName}} ${{paramName}}): JsonResponse
+    {
+        return $this->{{paramName}}Repository->show($request, ${{paramName}});
+    }
+
+    /**
+    * {{modelName}} create
+    *
+    {{fields}}
+    *
+    * @param Store{{modelName}}Request $request
+    * @return JsonResponse
+    */
+
+    public function store(Store{{modelName}}Request $request): JsonResponse
+    {
+        return $this->{{paramName}}Repository->store($request);
+    }
+
+    /**
+    * {{modelName}} update
+    *
+    * @queryParam {{paramName}} required
+    *
+    {{fields}}
+    *
+    * @param Update{{modelName}}Request $request
+    * @param {{modelName}} ${{paramName}}
+    * @return JsonResponse
+    */
+
+    public function update(Update{{modelName}}Request $request, {{modelName}} ${{paramName}}): JsonResponse
+    {
+         return $this->{{paramName}}Repository->update($request, ${{paramName}});
+    }
+
+    /**
+     * {{modelName}} delete
+     *
+     * @queryParam {{paramName}} required
+     *
+     * @param {{modelName}} ${{paramName}}
+     * @return JsonResponse
+     */
+
+    public function destroy({{modelName}} ${{paramName}}): JsonResponse
+    {
+        return  $this->{{paramName}}Repository->destroy(${{paramName}});
+    }
+}

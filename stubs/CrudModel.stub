@@ -1,0 +1,19 @@
+<?php
+
+namespace {{namespace}};
+
+use Illuminate\Database\Eloquent\Model;
+{{path}}
+
+/**
+* This is the model class for table "{{table}}".
+*/
+
+class {{modelName}} extends Model
+{ {{useTraits}}
+    protected $table = '{{table}}';
+
+    protected $fillable = {{fillable}};
+    {{translatableFunctions}}{{relations}}
+
+}

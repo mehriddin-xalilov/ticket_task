@@ -1,0 +1,59 @@
+<?php
+
+namespace {{namespace}};
+
+
+use App\Models\{{modelName}};
+use Illuminate\Http\JsonResponse;
+use Illuminate\Http\Request;
+use App\Helpers\Traits\QueryBuilderTrait;
+
+class {{modelName}}Repository
+{
+    use QueryBuilderTrait;
+    /**
+     * @var {{modelName}} $ modelClass
+     */
+    protected mixed $modelClass = {{modelName}}::class;
+
+    public function index(Request $request): JsonResponse
+    {
+        $query = $this->defaultQuery($request);
+        $this->defaultAllowFilter($query, $request);
+        return $this->withPagination($query, $request);
+    }
+
+    public function adminIndex(Request $request): JsonResponse
+    {
+        $query = $this->defaultQuery($request);
+        $this->defaultAllowFilter($query, $request);
+        return $this->withPagination($query, $request);
+    }
+
+    public function show(Request $request, {{modelName}} ${{paramName}}): JsonResponse
+    {
+        $this->allowIncludeAndAppend($request, ${{paramName}});
+        return okResponse(${{paramName}});
+    }
+
+    public function store(Request $request): JsonResponse
+    {
+        $model = {{modelName}}::query()->create($request->all());
+        $this->allowIncludeAndAppend($request, $model);
+        return okResponse($model);
+    }
+
+    public function update(Request $request, {{modelName}} ${{paramName}}): JsonResponse
+    {
+        ${{paramName}}->update($request->all());
+        $this->allowIncludeAndAppend($request, ${{paramName}});
+        return okResponse(${{paramName}});
+    }
+
+    public function destroy({{modelName}} ${{paramName}}): JsonResponse
+    {
+        ${{paramName}}->delete();
+        return okResponse(${{paramName}});
+    }
+}
+

@@ -1,0 +1,23 @@
+<?php
+
+namespace {{namespace}};
+
+
+use App\Models\{{modelName}};
+use Illuminate\Http\Request;
+use Illuminate\Http\JsonResponse;
+
+interface {{modelName}}Interface
+{
+    public function index(Request $request);
+
+    public function adminIndex(Request $request);
+
+    public function show(Request $request, string $slug): JsonResponse;
+
+    public function store(Request $request): JsonResponse;
+
+    public function update(Request $request, {{modelName}} ${{paramName}}): JsonResponse;
+
+    public function destroy({{modelName}} ${{paramName}}): JsonResponse;
+}
