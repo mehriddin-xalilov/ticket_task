@@ -20,18 +20,11 @@ class ApiService
                 if ($response->successful()) {
                     $token = $response->json('access_token');
                     if ($token) {
-                        Log::info('Token retrieved successfully');
                         return $token;
                     }
                 }
-
-                Log::error('Failed to get token', [
-                    'status' => $response->status(),
-                    'body' => $response->body()
-                ]);
                 return null;
             } catch (\Exception $e) {
-                Log::error('Exception while getting token', ['error' => $e->getMessage()]);
                 return null;
             }
         });
@@ -43,25 +36,11 @@ class ApiService
             $token = $this->getToken();
 
             if (!$token) {
-                Log::error('No token available to fetch tickets');
                 return ['error' => 'Unable to authenticate with Amadeus API'];
             }
-
-            Log::info('Using token', ['token' => substr($token, 0, 20) . '...']);
-
-            /**
-             * NOTE:
-             * `shopping/flight-destinations` hozir 500 (code 141) qaytaryapti.
-             * Kod to'g'ri, lekin bu Amadeus server tomondagi xato.
-             *
-             * Hozircha ishini ko'rsatish uchun ancha barqaror va oddiy endpointdan
-             * foydalanamiz: reference-data/locations (aeroportlar ro'yxati).
-             */
-
             $response = Http::withToken($token)->get(
                 config('services.api.base_url') . '/reference-data/locations',
                 [
-                    // Aeroportlar bo'yicha qidiruv, test uchun "MAD" (Madrid) kalit so'zi.
                     'subType' => 'AIRPORT',
                     'keyword' => 'MAD',
                 ]
@@ -71,18 +50,12 @@ class ApiService
                 return $response->json();
             }
 
-            Log::error('Failed to fetch tickets', [
-                'status' => $response->status(),
-                'body' => $response->body()
-            ]);
-
             return [
                 'error' => 'Failed to fetch tickets from Amadeus API',
                 'status' => $response->status(),
                 'message' => $response->json('errors') ?? $response->body()
             ];
         } catch (\Exception $e) {
-            Log::error('Exception while fetching tickets', ['error' => $e->getMessage()]);
             return ['error' => $e->getMessage()];
         }
     }
