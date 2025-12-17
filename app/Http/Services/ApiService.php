@@ -41,7 +41,7 @@ class ApiService
     {
         try {
             $token = $this->getToken();
-            
+
             if (!$token) {
                 Log::error('No token available to fetch tickets');
                 return ['error' => 'Unable to authenticate with Amadeus API'];
@@ -49,9 +49,23 @@ class ApiService
 
             Log::info('Using token', ['token' => substr($token, 0, 20) . '...']);
 
-            // base_url already includes /v1, so we don't need to add it again
-            $response = Http::withToken($token)
-                ->get(config('services.api.base_url') . '/booking/flight-orders');
+            /**
+             * NOTE:
+             * Amadeus `GET /v1/booking/flight-orders` marshruti mavjud emas,
+             * shuning uchun u har doim 404 (code 700 - No routing found...) qaytaradi.
+             *
+             * Test uchun soddaroq va mavjud marshrutdan foydalanyapmiz:
+             * GET /v1/shopping/flight-destinations?origin=XXX
+             */
+
+            $response = Http::withToken($token)->get(
+                config('services.api.base_url') . '/shopping/flight-destinations',
+                [
+                    // Test uchun qattiq berilgan origin.
+                    // Xohlasangiz, kelajakda bu qiymatni so'rov parametrlari orqali olish mumkin.
+                    'origin' => 'MAD', // Madrid
+                ]
+            );
 
             if ($response->successful()) {
                 return $response->json();
