@@ -29,21 +29,31 @@ class ApiService
             }
         });
     }
-
-    public function getTickets(): array
-    {
+    public function getTickets(
+        string $from = 'MAD',
+        string $to = 'NYC',
+        string $departureDate = '2024-12-20',
+        ?string $returnDate = null,
+        int $adults = 1
+    ): array {
         try {
             $token = $this->getToken();
 
             if (!$token) {
-                return ['error' => 'Unable to authenticate with Amadeus API'];
+                return ['error' => 'Unable to authenticate'];
             }
+
             $response = Http::withToken($token)->get(
-                config('services.api.base_url') . '/reference-data/locations',
+                config('services.api.base_url') . '/shopping/flight-offers',
                 [
-                    'subType' => 'AIRPORT',
-                    'keyword' => 'MAD',
+                    'originLocationCode' => strtoupper($from),
+                    'destinationLocationCode' => strtoupper($to),
+                    'departureDate' => $departureDate,
+                    'returnDate' => $returnDate,
+                    'adults' => $adults,
+                    'max' => 250,
                 ]
+
             );
 
             if ($response->successful()) {
@@ -51,12 +61,43 @@ class ApiService
             }
 
             return [
-                'error' => 'Failed to fetch tickets from Amadeus API',
+                'error' => 'Failed to fetch flights',
                 'status' => $response->status(),
-                'message' => $response->json('errors') ?? $response->body()
+                'message' => $response->json('errors.0.detail') ?? $response->body()
             ];
         } catch (\Exception $e) {
+            Log::error('Flight API error: ' . $e->getMessage());
             return ['error' => $e->getMessage()];
         }
     }
+
+//    public function getTickets(): array
+//    {
+//        try {
+//            $token = $this->getToken();
+//
+//            if (!$token) {
+//                return ['error' => 'Unable to authenticate with Amadeus API'];
+//            }
+//            $response = Http::withToken($token)->get(
+//                config('services.api.base_url') . '/reference-data/locations',
+//                [
+//                    'subType' => 'AIRPORT',
+//                    'keyword' => 'MAD',
+//                ]
+//            );
+//
+//            if ($response->successful()) {
+//                return $response->json();
+//            }
+//
+//            return [
+//                'error' => 'Failed to fetch tickets from Amadeus API',
+//                'status' => $response->status(),
+//                'message' => $response->json('errors') ?? $response->body()
+//            ];
+//        } catch (\Exception $e) {
+//            return ['error' => $e->getMessage()];
+//        }
+//    }
 }
