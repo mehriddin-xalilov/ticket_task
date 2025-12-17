@@ -51,19 +51,19 @@ class ApiService
 
             /**
              * NOTE:
-             * Amadeus `GET /v1/booking/flight-orders` marshruti mavjud emas,
-             * shuning uchun u har doim 404 (code 700 - No routing found...) qaytaradi.
+             * `shopping/flight-destinations` hozir 500 (code 141) qaytaryapti.
+             * Kod to'g'ri, lekin bu Amadeus server tomondagi xato.
              *
-             * Test uchun soddaroq va mavjud marshrutdan foydalanyapmiz:
-             * GET /v1/shopping/flight-destinations?origin=XXX
+             * Hozircha ishini ko'rsatish uchun ancha barqaror va oddiy endpointdan
+             * foydalanamiz: reference-data/locations (aeroportlar ro'yxati).
              */
 
             $response = Http::withToken($token)->get(
-                config('services.api.base_url') . '/shopping/flight-destinations',
+                config('services.api.base_url') . '/reference-data/locations',
                 [
-                    // Test uchun qattiq berilgan origin.
-                    // Xohlasangiz, kelajakda bu qiymatni so'rov parametrlari orqali olish mumkin.
-                    'origin' => 'MAD', // Madrid
+                    // Aeroportlar bo'yicha qidiruv, test uchun "MAD" (Madrid) kalit so'zi.
+                    'subType' => 'AIRPORT',
+                    'keyword' => 'MAD',
                 ]
             );
 
